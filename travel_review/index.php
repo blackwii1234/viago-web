@@ -384,6 +384,73 @@ document.addEventListener("DOMContentLoaded", function() {
     const countryLabel =
         document.getElementById("country-name");
 
+    const mapMarkers = [
+
+        {
+            code: "KR",
+            name: enabledCountries.KR,
+            label: "KR",
+            coords: [36.5, 127.8],
+            enabled: true
+        },
+
+        {
+            code: "JP",
+            name: enabledCountries.JP,
+            label: "JP",
+            coords: [36.2, 138.2],
+            enabled: true
+        },
+
+        {
+            code: "US",
+            name: enabledCountries.US,
+            label: "US",
+            coords: [37.1, -95.7],
+            enabled: true
+        },
+
+        {
+            code: "FR",
+            name: enabledCountries.FR,
+            label: "FR",
+            coords: [46.2, 2.2],
+            enabled: true
+        },
+
+        {
+            code: "GB",
+            name: enabledCountries.GB,
+            label: "GB",
+            coords: [55.4, -3.4],
+            enabled: true
+        },
+
+        {
+            code: "TH",
+            name: enabledCountries.TH,
+            label: "TH",
+            coords: [15.8, 101.0],
+            enabled: true
+        },
+
+        {
+            code: "CA",
+            name: "준비중",
+            label: "CA",
+            coords: [56.1, -106.3],
+            enabled: false
+        },
+
+        {
+            code: "AU",
+            name: "준비중",
+            label: "AU",
+            coords: [-25.3, 133.8],
+            enabled: false
+        }
+    ];
+
     // 지도 초기화
 
     document.getElementById(
@@ -400,7 +467,45 @@ document.addEventListener("DOMContentLoaded", function() {
 
         zoomOnScroll: false,
 
+        draggable: false,
+
         backgroundColor: "transparent",
+
+        markers: mapMarkers.map(function(marker) {
+
+            return {
+                name: marker.label,
+                coords: marker.coords
+            };
+        }),
+
+        markerStyle: {
+
+            initial: {
+
+                fill: "transparent",
+
+                stroke: "transparent"
+            },
+
+            hover: {
+
+                fill: "transparent",
+
+                stroke: "transparent"
+            }
+        },
+
+        labels: {
+
+            markers: {
+
+                render: function(marker, index) {
+
+                    return mapMarkers[index].label;
+                }
+            }
+        },
 
         regionStyle: {
 
@@ -470,14 +575,52 @@ document.addEventListener("DOMContentLoaded", function() {
                         enabledCountries[code]
                     );
             }
+        },
+
+        onMarkerTooltipShow:
+        function(event, tooltip, index) {
+
+            const marker =
+                mapMarkers[index];
+
+            if (marker.enabled) {
+
+                tooltip.text(
+                    marker.label
+                    + " · "
+                    + marker.name
+                );
+
+            } else {
+
+                tooltip.text(
+                    marker.label
+                    + " · 준비중"
+                );
+            }
+        },
+
+        onMarkerClick:
+        function(event, index) {
+
+            const marker =
+                mapMarkers[index];
+
+            if (marker.enabled) {
+
+                location.href =
+                    "reviews/list.php?country="
+                    + encodeURIComponent(marker.name);
+            }
         }
     });
 
     document
         .getElementById("world-map")
         .addEventListener("wheel", function(event) {
+            event.preventDefault();
             event.stopPropagation();
-        }, { passive: true });
+        }, { passive: false });
 
 });
 
