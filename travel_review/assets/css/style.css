@@ -246,6 +246,15 @@ body {
 .jvm-container {
 
     background: transparent !important;
+    overflow: visible !important;
+}
+
+#world-map .jvm-container {
+
+    transform:
+        translateX(-11vw);
+
+    transform-origin: center center;
 }
 
 /* hover 국가명 */
@@ -284,6 +293,12 @@ body {
         width: 100vw;
         height: 440px;
         margin: 10px 0 0;
+    }
+
+    #world-map .jvm-container {
+
+        transform:
+            translateX(-7vw);
     }
 }
 
@@ -2968,6 +2983,12 @@ body {
         height: 360px;
         margin-left: 0;
         margin-right: 0;
+    }
+
+    #world-map .jvm-container {
+
+        transform:
+            translateX(-5vw);
     }
 
     /* TOP 3 */
