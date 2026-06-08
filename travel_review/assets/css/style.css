@@ -74,9 +74,9 @@ body {
     background:
         linear-gradient(
             180deg,
-            #d7f0ff,
-            #eef8ff 62%,
-            var(--bg)
+            #d7f0ff 0%,
+            #e6f6ff 46%,
+            #eef8ff 100%
         );
 }
 
@@ -179,10 +179,10 @@ body {
 
     position: relative;
 
-    width: min(1180px, 96vw);
+    width: 100vw;
     height: clamp(380px, 58vh, 620px);
 
-    margin: 20px auto 0;
+    margin: 20px calc(50% - 50vw) 0;
 
     border-radius: 0;
 
@@ -192,13 +192,7 @@ body {
 
     border: 0;
 
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(248,252,255,0.86) 0%,
-            rgba(184,225,255,0.42) 44%,
-            rgba(184,225,255,0) 72%
-        );
+    background: transparent;
 
     box-shadow:
         none;
@@ -254,9 +248,9 @@ body {
 
     .globe-wrapper {
 
-        width: 100%;
+        width: 100vw;
         height: 440px;
-        margin-top: 10px;
+        margin: 10px calc(50% - 50vw) 0;
     }
 }
 
@@ -2909,8 +2903,10 @@ body {
 
     .globe-wrapper {
 
-        width: 100%;
+        width: 100vw;
         height: 360px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
     }
 
     /* TOP 3 */
