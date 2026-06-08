@@ -29,7 +29,13 @@ body {
 
     margin: 0;
 
-    background: var(--bg);
+    background:
+        linear-gradient(
+            180deg,
+            #d7f0ff 0%,
+            #e6f6ff 46%,
+            #eef8ff 100%
+        );
 
     font-family:
         'Noto Sans KR',
@@ -119,7 +125,7 @@ body {
 
     text-align: center;
 
-    width: min(1280px, 100%);
+    width: 100%;
     padding: 34px 24px 44px;
 }
 
@@ -182,7 +188,7 @@ body {
     width: 100vw;
     height: clamp(380px, 58vh, 620px);
 
-    margin: 20px calc(50% - 50vw) 0;
+    margin: 20px -24px 0;
 
     border-radius: 0;
 
@@ -207,6 +213,8 @@ body {
 
     width: 100%;
     height: 100%;
+
+    touch-action: none;
 }
 
 #world-map svg {
@@ -250,7 +258,7 @@ body {
 
         width: 100vw;
         height: 440px;
-        margin: 10px calc(50% - 50vw) 0;
+        margin: 10px -24px 0;
     }
 }
 
@@ -259,6 +267,8 @@ body {
 .flag-marker {
 
     position: absolute;
+
+    display: none;
 
     z-index: 50;
 
@@ -349,6 +359,32 @@ body {
     }
 }
 
+.jvm-marker,
+.jvm-label,
+.jvm-marker-label {
+
+    cursor: pointer;
+}
+
+.jvm-label,
+.jvm-marker-label {
+
+    fill: var(--primary) !important;
+    color: var(--primary) !important;
+
+    font-family:
+        'Poppins',
+        'Noto Sans KR',
+        sans-serif;
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    text-shadow:
+        0 1px 8px rgba(255,255,255,0.85);
+}
+
 /* 준비중 */
 
 .disabled {
@@ -362,50 +398,50 @@ body {
 
 .korea {
 
-    top: 42%;
-    left: 79%;
+    top: 37%;
+    left: 68.5%;
 }
 
 .japan {
 
-    top: 43%;
-    left: 84%;
+    top: 38%;
+    left: 72%;
 }
 
 .usa {
 
-    top: 39%;
-    left: 20%;
+    top: 43%;
+    left: 27%;
 }
 
 .france {
 
-    top: 34%;
-    left: 49%;
+    top: 39%;
+    left: 48.5%;
 }
 
 .uk {
 
-    top: 28%;
+    top: 34%;
     left: 47%;
 }
 
 .thailand {
 
-    top: 58%;
-    left: 75%;
+    top: 56%;
+    left: 66%;
 }
 
 .canada {
 
-    top: 23%;
-    left: 19%;
+    top: 32%;
+    left: 26%;
 }
 
 .australia {
 
-    top: 76%;
-    left: 84%;
+    top: 80%;
+    left: 72.5%;
 }
 
 /* 국가 hero */
@@ -2905,8 +2941,8 @@ body {
 
         width: 100vw;
         height: 360px;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
+        margin-left: -24px;
+        margin-right: -24px;
     }
 
     /* TOP 3 */
