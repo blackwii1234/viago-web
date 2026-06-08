@@ -398,6 +398,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         zoomButtons: false,
 
+        zoomOnScroll: false,
+
         backgroundColor: "transparent",
 
         regionStyle: {
@@ -470,6 +472,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
+
+    document
+        .getElementById("world-map")
+        .addEventListener("wheel", function(event) {
+            event.stopPropagation();
+        }, { passive: true });
 
 });
 
