@@ -442,12 +442,22 @@ $done      = isset($_GET['done']);
                         <th>상태</th>
                         <th>AI 점수</th>
                         <th>이미지</th>
+                        <th>필터링 사유</th>
                         <th>등록일</th>
                         <th>관리</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($reviews as $r): ?>
+                    <?php
+                        $filterReasons = array_values(array_filter([
+                            trim((string)($r['moderation_reason'] ?? '')),
+                            trim((string)($r['image_reason'] ?? '')),
+                        ]));
+                        $filterReasonText = $filterReasons
+                            ? implode(' / ', array_unique($filterReasons))
+                            : (($r['status'] !== 'normal') ? '필터링 사유 없음' : '-');
+                    ?>
                     <tr data-status="<?= $r['status'] ?>">
                         <td class="muted"><?= $r['id'] ?></td>
                         <td>
@@ -484,6 +494,9 @@ $done      = isset($_GET['done']);
                             <?php if ((int)($r['media_flagged_count'] ?? 0) > 0): ?>
                                 <span class="badge-flagged">이미지 검토</span>
                             <?php endif; ?>
+                        </td>
+                        <td class="filter-reason-cell" title="<?= htmlspecialchars($filterReasonText, ENT_QUOTES, 'UTF-8') ?>">
+                            <?= htmlspecialchars(mb_strimwidth($filterReasonText, 0, 72, '...', 'UTF-8')) ?>
                         </td>
                         <td class="muted"><?= date('m-d H:i', strtotime($r['created_at'])) ?></td>
                         <td>
@@ -672,9 +685,17 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 });
 
 // ── 리뷰 모달 ──
+function escHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = value == null ? '' : String(value);
+    return div.innerHTML;
+}
+
 function showReviewModal(data) {
     const statusLabel = { normal: '정상', flagged: '검토필요', reported: '신고됨' };
     const statusClass = { normal: 'badge-normal', flagged: 'badge-flagged', reported: 'badge-reported' };
+    const textReason = data.reason ? escHtml(data.reason) : '텍스트 필터 사유 없음';
+    const imageReason = data.image_reason ? escHtml(data.image_reason) : '이미지 필터 사유 없음';
 
     document.getElementById('modalTitle').textContent = data.title;
     document.getElementById('modalMeta').innerHTML =
@@ -683,10 +704,10 @@ function showReviewModal(data) {
         `<span><i class="bi bi-geo-alt"></i> ${data.location}</span>` +
         `<span><i class="bi bi-calendar3"></i> ${data.created_at}</span>`;
     document.getElementById('modalModeration').innerHTML =
-        `<span><i class="bi bi-shield-check"></i> AI 광고 의심 점수: ${data.ad_score || 0}</span>` +
-        `<span><i class="bi bi-image"></i> 이미지 검열 점수: ${data.image_score || 0}</span>` +
-        (data.reason ? `<span><i class="bi bi-info-circle"></i> ${data.reason}</span>` : '') +
-        (data.image_reason ? `<span><i class="bi bi-exclamation-triangle"></i> ${data.image_reason}</span>` : '');
+        '<span><i class="bi bi-shield-check"></i> AI 필터 점수: ' + (data.ad_score || 0) + '</span>' +
+        '<span><i class="bi bi-image"></i> 이미지 검수 점수: ' + (data.image_score || 0) + '</span>' +
+        '<span><i class="bi bi-info-circle"></i> 텍스트 필터 사유: ' + textReason + '</span>' +
+        '<span><i class="bi bi-exclamation-triangle"></i> 이미지 필터 사유: ' + imageReason + '</span>';
     document.getElementById('modalContent').textContent = data.content;
     document.getElementById('modalStatus').innerHTML =
         `<span class="${statusClass[data.status] || ''}">${statusLabel[data.status] || data.status}</span>`;
