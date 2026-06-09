@@ -865,6 +865,45 @@ body {
     height: fit-content;
 }
 
+.media-moderation-badge {
+
+    position: absolute;
+
+    top: 14px;
+    left: 14px;
+    right: 14px;
+
+    z-index: 8;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 14px;
+
+    border-radius: 14px;
+
+    background: rgba(194, 65, 12, 0.92);
+    color: white;
+
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
+}
+
+.media-moderation-badge.blocked {
+
+    background: rgba(185, 28, 28, 0.94);
+}
+
+.media-moderation-badge span {
+
+    font-size: 0.78rem;
+    font-weight: 600;
+    opacity: 0.94;
+}
+
 /* 메인 이미지 */
 
 .main-image {
@@ -3009,4 +3048,35 @@ body {
 
         font-size: 3rem;
     }
+}
+
+.thumbnail-moderation-badge {
+
+    position: absolute;
+
+    right: 5px;
+    bottom: 5px;
+
+    z-index: 6;
+
+    padding: 3px 7px;
+
+    border-radius: 999px;
+
+    background: #fff7ed;
+    color: #c2410c;
+
+    border: 1px solid rgba(194, 65, 12, 0.3);
+
+    font-size: 0.64rem;
+    font-weight: 900;
+
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+}
+
+.thumbnail-moderation-badge.blocked {
+
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: rgba(185, 28, 28, 0.3);
 }
