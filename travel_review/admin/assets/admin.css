@@ -338,6 +338,20 @@ body {
 
 .admin-table td.muted { color: var(--text-light); }
 
+.filter-reason-cell {
+    max-width: 260px;
+    color: #7c2d12;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    white-space: normal;
+    word-break: keep-all;
+}
+
+.filter-reason-cell:empty::before {
+    content: "-";
+    color: var(--text-light);
+}
+
 /* ─── 상태 뱃지 ─── */
 
 .badge-normal   { background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
