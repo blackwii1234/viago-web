@@ -5,6 +5,7 @@ session_start();
 require_once "../config/db.php";
 
 $id = $_GET["id"];
+$isAdmin = isset($_SESSION["user_id"]) && ($_SESSION["role"] ?? "") === "admin";
 
 $sql = "
     UPDATE reviews
@@ -36,7 +37,6 @@ if (!$review) {
 
 // flagged 리뷰는 관리자만 접근 가능
 if ($review["status"] === "flagged") {
-    $isAdmin = isset($_SESSION["user_id"]) && ($_SESSION["role"] ?? "") === "admin";
     if (!$isAdmin) {
         header("Location: /travel_review/index.php");
         exit;
@@ -155,6 +155,7 @@ $comments = $stmt->fetchAll();
             <?php if($mediaFiles): ?>
 
                 <?php $first = $mediaFiles[0]; ?>
+                <?php $firstModerationStatus = $first["moderation_status"] ?? "normal"; ?>
 
                 <?php if($first["file_type"] == "image"): ?>
 
@@ -178,6 +179,15 @@ $comments = $stmt->fetchAll();
 
                 <?php endif; ?>
 
+                <?php if($isAdmin && in_array($firstModerationStatus, ["flagged", "blocked"], true)): ?>
+                    <div class="media-moderation-badge <?= $firstModerationStatus === "blocked" ? "blocked" : "flagged" ?>">
+                        <?= $firstModerationStatus === "blocked" ? "BLOCKED" : "FLAGGED" ?>
+                        <?php if(!empty($first["moderation_reason"])): ?>
+                            <span><?= htmlspecialchars($first["moderation_reason"]) ?></span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
             <?php else: ?>
 
                 <img
@@ -192,6 +202,7 @@ $comments = $stmt->fetchAll();
                 <?php foreach($mediaFiles as $media): ?>
 
                     <div class="thumbnail-wrap">
+                        <?php $mediaModerationStatus = $media["moderation_status"] ?? "normal"; ?>
 
                         <?php if($media["is_thumbnail"]): ?>
 
@@ -201,13 +212,22 @@ $comments = $stmt->fetchAll();
 
                         <?php endif; ?>
 
+                        <?php if($isAdmin && in_array($mediaModerationStatus, ["flagged", "blocked"], true)): ?>
+                            <span
+                                class="thumbnail-moderation-badge <?= $mediaModerationStatus === "blocked" ? "blocked" : "flagged" ?>"
+                                title="<?= htmlspecialchars($media["moderation_reason"] ?? "", ENT_QUOTES, "UTF-8") ?>"
+                            >
+                                <?= $mediaModerationStatus === "blocked" ? "BLOCK" : "FLAG" ?>
+                            </span>
+                        <?php endif; ?>
+
                         <?php if($media["file_type"] == "image"): ?>
 
                             <img
                                 src="<?= htmlspecialchars(media_url($media["file_path"])) ?>"
                                 class="thumbnail-image"
                                 loading="lazy"
-                                onclick='changeMedia("image", <?= json_encode(media_url($media["file_path"])) ?>)'
+                                onclick='changeMedia("image", <?= json_encode(media_url($media["file_path"])) ?>, <?= json_encode($mediaModerationStatus) ?>, <?= json_encode($media["moderation_reason"] ?? "") ?>)'
                             >
 
                         <?php elseif($media["file_type"] == "video"): ?>
@@ -216,7 +236,7 @@ $comments = $stmt->fetchAll();
                                 class="thumbnail-image"
                                 muted
                                 playsinline
-                                onclick='changeMedia("video", <?= json_encode(media_url($media["file_path"])) ?>)'
+                                onclick='changeMedia("video", <?= json_encode(media_url($media["file_path"])) ?>, <?= json_encode($mediaModerationStatus) ?>, <?= json_encode($media["moderation_reason"] ?? "") ?>)'
                             >
 
                                 <source
@@ -407,13 +427,31 @@ $comments = $stmt->fetchAll();
 <script>
 
 /* 미디어 전환 */
-function changeMedia(type, src) {
+const isAdminViewer = <?= $isAdmin ? 'true' : 'false' ?>;
+
+function escHtml(value) {
+    const div = document.createElement("div");
+    div.textContent = value == null ? "" : String(value);
+    return div.innerHTML;
+}
+
+function moderationBadgeHtml(status, reason) {
+    if (!isAdminViewer || !["flagged", "blocked"].includes(status)) {
+        return "";
+    }
+
+    const label = status === "blocked" ? "BLOCKED" : "FLAGGED";
+    const reasonHtml = reason ? `<span>${escHtml(reason)}</span>` : "";
+    return `<div class="media-moderation-badge ${status}">${label}${reasonHtml}</div>`;
+}
+
+function changeMedia(type, src, status, reason) {
     const container  = document.querySelector(".gallery-section");
     const oldThumbs  = document.querySelector(".thumbnail-list");
     const mediaHtml  = type === "image"
         ? `<img src="${src}" class="main-image" id="mainMedia" loading="lazy">`
         : `<video controls autoplay playsinline class="main-image" id="mainMedia"><source src="${src}"></video>`;
-    container.innerHTML = mediaHtml + oldThumbs.outerHTML;
+    container.innerHTML = mediaHtml + moderationBadgeHtml(status, reason) + oldThumbs.outerHTML;
 }
 
 /* 좋아요 */
